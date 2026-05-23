@@ -1,0 +1,53 @@
+name: Build and Auto-Update APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Ensure Gradle is executable
+      run: |
+        if [ -f "gradlew" ]; then
+          chmod +x gradlew
+        fi
+
+    - name: Build APK using Gradle
+      run: |
+        if [ -f "gradlew" ]; then
+          ./gradlew assembleDebug
+        else
+          gradle assembleDebug
+        fi
+
+    - name: Rename APK
+      run: |
+        cp app/build/outputs/apk/debug/app-debug.apk updatemovie.apk
+
+    - name: Commit and Push new APK
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add updatemovie.apk
+        # If there are changes, commit and push
+        if ! git diff --staged --quiet; then
+          git commit -m "chore: Auto-build updated updatemovie.apk"
+          git push
+        else
+          echo "No APK changes to commit"
+        fi
