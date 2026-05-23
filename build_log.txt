@@ -8,58 +8,42 @@ Here are the highlights of this release:
 For more details see https://docs.gradle.org/9.5.1/release-notes.html
 
 Starting a Gradle Daemon (subsequent builds will be faster)
-Calculating task graph as no cached configuration is available for tasks: assembleDebug
 > Task :app:preBuild UP-TO-DATE
-> Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:generateDebugBuildConfig
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
-> Task :app:javaPreCompileDebug
-> Task :app:checkDebugDuplicateClasses
-> Task :app:desugarDebugFileDependencies
 > Task :app:processDebugNavigationResources
+> Task :app:parseDebugLocalResources
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :app:generateDebugRFile
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
-> Task :app:mergeLibDexDebug
+> Task :app:desugarDebugFileDependencies
+> Task :app:checkDebugDuplicateClasses
 > Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
+> Task :app:mergeLibDexDebug
 > Task :app:compileDebugNavigationResources
-> Task :app:parseDebugLocalResources
-> Task :app:generateDebugRFile
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugJniLibFolders
+> Task :app:mergeDebugResources
 > Task :app:mergeDebugNativeLibs
-> Task :app:stripDebugDebugSymbols
+> Task :app:processDebugResources
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
+> Task :app:stripDebugDebugSymbols
 > Task :app:writeDebugSigningConfigVersions
-> Task :app:mergeDebugResources
-> Task :app:processDebugResources
-Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "ksp.com.intellij.openapi.application.Application.getService(java.lang.Class)" because the return value of "ksp.com.intellij.openapi.application.ApplicationManager.getApplication()" is null
-	at ksp.com.intellij.openapi.fileEditor.FileDocumentManager.getInstance(FileDocumentManager.java:35)
-	at ksp.com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers.lambda$notifyDecompilerSetChange$1(BinaryFileTypeDecompilers.java:29)
-	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
-	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
-	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
-	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
-	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
-	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
-	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
-	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-> Task :app:kspDebugKotlin
 > Task :app:mergeExtDexDebug
-> Task :app:compileDebugKotlin
+> Task :app:kspDebugKotlin
+
+> Task :app:compileDebugKotlin FAILED
 e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:33:31 Unresolved reference 'BookmarkScreenContent'.
 e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:34:31 Unresolved reference 'DetailPlayerScreenContent'.
 e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:243:17 Unresolved reference 'BookmarkScreenContent'.
@@ -99,8 +83,6 @@ e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/s
 e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1408:2 Syntax error: Expecting '}'.
 e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1408:2 Syntax error: Expecting '->'.
 
-> Task :app:compileDebugKotlin FAILED
-
 FAILURE: Build failed with an exception.
 
 * What went wrong:
@@ -114,6 +96,5 @@ Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.a
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 2m 51s
+BUILD FAILED in 37s
 31 actionable tasks: 31 executed
-Configuration cache entry stored.
