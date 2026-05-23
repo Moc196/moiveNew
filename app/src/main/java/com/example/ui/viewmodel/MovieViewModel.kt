@@ -254,7 +254,9 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         // Find if we have history for this slug
                         val history = repository.getWatchHistoryBySlug(slug)
                         val lastEpisode = defaultServer.items.find { it.slug == history?.episodeSlug }
-                        _selectedEpisode.value = lastEpisode ?: defaultServer.items.first()
+                        val epToPlay = lastEpisode ?: defaultServer.items.first()
+                        _selectedEpisode.value = epToPlay
+                        saveEpisodeToHistory(epToPlay)
                     }
                 }
             }.onFailure {
@@ -268,7 +270,11 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         // Keep episode selected or find corresponding
         val currentEp = _selectedEpisode.value
         val matches = server.items.find { it.name == currentEp?.name }
-        _selectedEpisode.value = matches ?: server.items.firstOrNull()
+        val epToPlay = matches ?: server.items.firstOrNull()
+        _selectedEpisode.value = epToPlay
+        if (epToPlay != null) {
+            saveEpisodeToHistory(epToPlay)
+        }
     }
 
     fun selectEpisode(episode: EpisodeItem) {
