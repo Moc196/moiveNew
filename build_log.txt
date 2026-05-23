@@ -13,14 +13,14 @@ Calculating task graph as no cached configuration is available for tasks: assemb
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :app:generateDebugBuildConfig
 > Task :app:generateDebugResources
+> Task :app:generateDebugBuildConfig
 > Task :app:packageDebugResources
 > Task :app:javaPreCompileDebug
-> Task :app:checkDebugDuplicateClasses
-> Task :app:desugarDebugFileDependencies
 > Task :app:processDebugNavigationResources
+> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugAssets
+> Task :app:desugarDebugFileDependencies
 > Task :app:compressDebugAssets
 > Task :app:mergeLibDexDebug
 > Task :app:checkDebugAarMetadata
@@ -41,6 +41,8 @@ Calculating task graph as no cached configuration is available for tasks: assemb
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:mergeDebugResources
 > Task :app:processDebugResources
+> Task :app:kspDebugKotlin
+
 Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "ksp.com.intellij.openapi.application.Application.getService(java.lang.Class)" because the return value of "ksp.com.intellij.openapi.application.ApplicationManager.getApplication()" is null
 	at ksp.com.intellij.openapi.fileEditor.FileDocumentManager.getInstance(FileDocumentManager.java:35)
 	at ksp.com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers.lambda$notifyDecompilerSetChange$1(BinaryFileTypeDecompilers.java:29)
@@ -57,7 +59,7 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
 	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-> Task :app:kspDebugKotlin
+
 > Task :app:mergeExtDexDebug
 > Task :app:compileDebugKotlin
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:94:25 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
@@ -174,6 +176,6 @@ See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
 > Task :app:assembleDebug
 > Task :app:createDebugApkListingFileRedirect
 
-BUILD SUCCESSFUL in 3m 5s
+BUILD SUCCESSFUL in 3m 10s
 38 actionable tasks: 38 executed
 Configuration cache entry stored.
