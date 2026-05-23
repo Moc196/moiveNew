@@ -1,6 +1,6 @@
 {
-  "versionCode": 3,
-  "versionName": "1.2.0",
+  "versionCode": 4,
+  "versionName": "1.2.1",
   "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk",
-  "releaseNotes": "Làm lại giao diện bộ lọc tuyệt đẹp. Thêm tính năng lọc theo Quốc gia và Năm phát hành."
+  "releaseNotes": "Sửa lỗi tính năng lọc phụ theo Định dạng và Ngôn ngữ hoạt động không chính xác."
 }

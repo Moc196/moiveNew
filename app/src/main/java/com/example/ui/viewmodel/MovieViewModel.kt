@@ -194,6 +194,12 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun applyClientFilters() {
+        val currentPrimary = _primaryFilter.value
+        if (currentPrimary is PrimaryFilter.None || (currentPrimary is PrimaryFilter.Search && currentPrimary.query.trim().isEmpty())) {
+            _searchState.value = UiState.Idle
+            return
+        }
+
         val qFilter = _selectedQuality.value
         val lFilter = _selectedLanguage.value
         val filtered = rawSearchResults.filter { item ->
@@ -221,7 +227,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         val f = filter.lowercase()
         return when (f) {
             "vietsub" -> l.contains("sub") || l.contains("việt")
-            "thuyết minh" -> l.contains("thuyết") || l.contains("tm") || l.contains("tm")
+            "thuyết minh" -> l.contains("thuyết") || l.contains("minh") || l.contains("tm")
             "lồng tiếng" -> l.contains("lồng") || l.contains("lt")
             "phụ đề" -> l.contains("phụ") || l.contains("sub")
             else -> l.contains(f)
