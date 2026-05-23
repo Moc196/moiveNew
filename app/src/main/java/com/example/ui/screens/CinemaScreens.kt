@@ -785,6 +785,15 @@ fun SearchScreenContent(
                         items(results) { item ->
                             MovieCard(
                                 name = item.name,
+                                posterUrl = item.posterUrl ?: item.thumbUrl,
+                                quality = item.quality,
+                                episodeText = item.currentEpisode,
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { onMovieClick(item.slug) }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -1062,10 +1071,8 @@ fun DetailPlayerScreenContent(
                     } else {
                         Modifier.fillMaxWidth().aspectRatio(1.77f).background(Color.Black)
                     }
-                    
-                    Box(
-                        modifier = playerModifier
-                    ) {
+
+                    Box(modifier = playerModifier) {
                         EmbedVideoPlayer(
                             url = streamUrl,
                             modifier = Modifier.fillMaxSize()
@@ -1087,10 +1094,10 @@ fun DetailPlayerScreenContent(
 
                 if (!pipMode) {
                     // Scrollable movie meta and episodes below the video deck
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
                     // Back and title header block
                     item {
                         Row(
@@ -1399,6 +1406,7 @@ fun DetailPlayerScreenContent(
                                 )
                             }
                         }
+                    }
                     }
                 }
             }
