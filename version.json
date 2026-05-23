@@ -1,6 +1,6 @@
 {
-  "versionCode": 4,
-  "versionName": "1.2.1",
+  "versionCode": 5,
+  "versionName": "1.2.2",
   "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk",
-  "releaseNotes": "Sửa lỗi tính năng lọc phụ theo Định dạng và Ngôn ngữ hoạt động không chính xác."
+  "releaseNotes": "Tự động reset lọc phụ (Định dạng/Ngôn ngữ) khi bạn chọn Tiêu chí chính mới để tránh hiện tượng trắng màn hình."
 }

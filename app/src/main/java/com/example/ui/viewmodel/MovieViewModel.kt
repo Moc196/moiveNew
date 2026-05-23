@@ -154,6 +154,11 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setPrimaryFilter(filter: PrimaryFilter) {
         _primaryFilter.value = filter
+        
+        // Reset secondary filters when primary filter changes to avoid unexpected empty results
+        _selectedQuality.value = null
+        _selectedLanguage.value = null
+        
         if (filter is PrimaryFilter.None || (filter is PrimaryFilter.Search && filter.query.trim().isEmpty())) {
             rawSearchResults = emptyList()
             _searchState.value = UiState.Idle
