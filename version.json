@@ -1,6 +1,6 @@
 {
   "versionCode": 5,
   "versionName": "1.2.2",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.2.2",
   "releaseNotes": "Tự động reset lọc phụ (Định dạng/Ngôn ngữ) khi bạn chọn Tiêu chí chính mới để tránh hiện tượng trắng màn hình."
 }
