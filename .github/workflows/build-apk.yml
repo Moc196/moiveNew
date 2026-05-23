@@ -21,10 +21,13 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Ensure Gradle is executable
+    - name: Ensure Gradle is executable and decode keystore
       run: |
         if [ -f "gradlew" ]; then
           chmod +x gradlew
+        fi
+        if [ -f "debug.keystore.base64" ]; then
+          base64 -d debug.keystore.base64 > debug.keystore
         fi
 
     - name: Build APK using Gradle
