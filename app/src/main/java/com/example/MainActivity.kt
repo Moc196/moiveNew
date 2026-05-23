@@ -45,16 +45,47 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.updater.UpdateManager
 import com.example.updater.UpdateInfo
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+
+val LocalPipMode = compositionLocalOf { false }
 
 class MainActivity : ComponentActivity() {
+    private val isPipMode = MutableStateFlow(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
-                MainScreen()
+            val pipMode by isPipMode.collectAsState()
+            CompositionLocalProvider(LocalPipMode provides pipMode) {
+                MyApplicationTheme {
+                    MainScreen()
+                }
             }
         }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            try {
+                val params = android.app.PictureInPictureParams.Builder().build()
+                enterPictureInPictureMode(params)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: android.content.res.Configuration
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        isPipMode.value = isInPictureInPictureMode
     }
 }
 
@@ -65,9 +96,10 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val context = LocalContext.current
+    val pipMode = LocalPipMode.current
 
     // Immersive display logic: hide bottom navigation bar on player/detail screen
-    val showBottomBar = currentDestination?.route?.startsWith("detail") != true
+    val showBottomBar = currentDestination?.route?.startsWith("detail") != true && !pipMode
 
     // --- Auto Update Logic ---
     var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }

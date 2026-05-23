@@ -785,15 +785,6 @@ fun SearchScreenContent(
                         items(results) { item ->
                             MovieCard(
                                 name = item.name,
-                                posterUrl = item.posterUrl ?: item.thumbUrl,
-                                quality = item.quality,
-                                episodeText = item.currentEpisode,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = { onMovieClick(item.slug) }
-                            )
-                        }
-                    }
-                }
             }
         }
     }
@@ -1054,6 +1045,7 @@ fun DetailPlayerScreenContent(
                 // 1. Integrated WebView Player Header
                 val activeEmbedUrl = selectedEpisode?.embed
                 val activeM3u8Url = selectedEpisode?.m3u8
+                val pipMode = com.example.LocalPipMode.current
 
                 // Prefer selected player format if both available, otherwise fallback
                 val streamUrl = if (useDirectM3u8 && !activeM3u8Url.isNullOrEmpty()) {
@@ -1065,11 +1057,14 @@ fun DetailPlayerScreenContent(
                 }
 
                 if (streamUrl.isNotEmpty()) {
+                    val playerModifier = if (pipMode) {
+                        Modifier.fillMaxSize().background(Color.Black)
+                    } else {
+                        Modifier.fillMaxWidth().aspectRatio(1.77f).background(Color.Black)
+                    }
+                    
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1.77f)
-                            .background(Color.Black)
+                        modifier = playerModifier
                     ) {
                         EmbedVideoPlayer(
                             url = streamUrl,
@@ -1077,18 +1072,21 @@ fun DetailPlayerScreenContent(
                         )
                     }
                 } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(210.dp)
-                            .background(Color.DarkGray),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Chưa có nguồn phát cho tập phim này", color = Color.White)
+                    if (!pipMode) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(210.dp)
+                                .background(Color.DarkGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Chưa có nguồn phát cho tập phim này", color = Color.White)
+                        }
                     }
                 }
 
-                // Scrollable movie meta and episodes below the video deck
+                if (!pipMode) {
+                    // Scrollable movie meta and episodes below the video deck
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp)

@@ -2,6 +2,9 @@ package com.example.ui.components
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.app.Activity
+import android.content.pm.ActivityInfo
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
@@ -9,6 +12,10 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.webkit.WebResourceRequest
+import android.widget.FrameLayout
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -131,10 +138,61 @@ fun EmbedVideoPlayer(
                         }
                     }
 
+                    var customView: View? = null
+                    var customViewCallback: WebChromeClient.CustomViewCallback? = null
+                    val activity = context as? Activity
+
                     webChromeClient = object : WebChromeClient() {
                         override fun getDefaultVideoPoster(): Bitmap? {
                             // Clear default gray background element to render video seamlessly
                             return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+                        }
+
+                        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                            super.onShowCustomView(view, callback)
+                            if (customView != null) {
+                                callback?.onCustomViewHidden()
+                                return
+                            }
+                            customView = view
+                            customViewCallback = callback
+
+                            activity?.let { act ->
+                                val decorView = act.window.decorView as FrameLayout
+                                decorView.addView(view, FrameLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                ))
+                                
+                                // Hide System UI
+                                val windowInsetsController = WindowCompat.getInsetsController(act.window, decorView)
+                                windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                                
+                                // Set landscape
+                                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                            }
+                        }
+
+                        override fun onHideCustomView() {
+                            super.onHideCustomView()
+                            val view = customView ?: return
+                            
+                            activity?.let { act ->
+                                val decorView = act.window.decorView as FrameLayout
+                                decorView.removeView(view)
+                                
+                                // Show System UI
+                                val windowInsetsController = WindowCompat.getInsetsController(act.window, decorView)
+                                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                                
+                                // Restore orientation
+                                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                            }
+                            
+                            customView = null
+                            customViewCallback?.onCustomViewHidden()
+                            customViewCallback = null
                         }
                     }
                 }
