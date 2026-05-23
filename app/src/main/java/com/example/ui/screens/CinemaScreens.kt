@@ -36,6 +36,7 @@ import com.example.data.models.EpisodeItem
 import com.example.data.models.MovieItem
 import com.example.ui.components.EmbedVideoPlayer
 import com.example.ui.viewmodel.MovieViewModel
+import com.example.ui.viewmodel.PrimaryFilter
 import com.example.ui.viewmodel.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -484,18 +485,20 @@ fun FilterChipItem(
 }
 
 // --- SEARCH SCREEN ---
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreenContent(
     viewModel: MovieViewModel,
     onMovieClick: (String) -> Unit
 ) {
-    val searchQuery by viewModel.searchQuery.collectAsState()
+    val primaryFilter by viewModel.primaryFilter.collectAsState()
+    val searchQuery = (primaryFilter as? PrimaryFilter.Search)?.query ?: ""
     val searchState by viewModel.searchState.collectAsState()
 
-    val selectedGenre by viewModel.selectedGenre.collectAsState()
     val selectedQuality by viewModel.selectedQuality.collectAsState()
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
+
+    var showFilterSheet by remember { mutableStateOf(false) }
 
     val genres = listOf(
         "hanh-dong" to "Hành động",
@@ -507,109 +510,127 @@ fun SearchScreenContent(
         "phieu-luu" to "Phiêu lưu",
         "hinh-su" to "Hình sự",
         "co-trang" to "Cổ trang",
-        "kien-hiep" to "Kiếm hiệp",
+        "kiem-hiep" to "Kiếm hiệp",
         "tam-ly" to "Tâm lý",
         "than-thoai" to "Thần thoại"
     )
+
+    val countries = listOf(
+        "han-quoc" to "Hàn Quốc",
+        "trung-quoc" to "Trung Quốc",
+        "viet-nam" to "Việt Nam",
+        "au-my" to "Âu Mỹ",
+        "thai-lan" to "Thái Lan",
+        "nhat-ban" to "Nhật Bản",
+        "an-do" to "Ấn Độ"
+    )
+
+    val years = listOf("2024", "2023", "2022", "2021", "2020", "2019", "2018")
+
     val qualities = listOf("Tất cả", "FullHD", "HD", "SD", "CAM")
     val languages = listOf("Tất cả", "Vietsub", "Thuyết Minh", "Lồng Tiếng", "Phụ Đề")
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(top = 16.dp)
-    ) {
-        // Search bar
-        TextField(
-            value = searchQuery,
-            onValueChange = { viewModel.searchMovies(it) },
-            placeholder = { Text("Tìm kiếm tên phim, diễn viên...", color = Color.Gray) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
-            trailingIcon = {
-                if (searchQuery.isNotEmpty() || selectedGenre != null || selectedQuality != null || selectedLanguage != null) {
-                    IconButton(onClick = {
-                        viewModel.searchMovies("")
-                        viewModel.selectGenre(null)
-                        viewModel.selectQuality("Tất cả")
-                        viewModel.selectLanguage("Tất cả")
-                    }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Xóa tất cả", tint = Color.Gray)
-                    }
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .testTag("search_input_field")
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // --- FILTER PILLS DECK ---
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    // Filter Bottom Sheet
+    if (showFilterSheet) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+        ModalBottomSheet(
+            onDismissRequest = { showFilterSheet = false },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
-            // Genre Horizontal Row
-            Column {
-                Text(
-                    text = "Thể loại",
-                    color = Color.LightGray,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
-                )
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    item {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    Text(
+                        text = "Tiêu chí lọc chính (Chọn 1)",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                item {
+                    Text(text = "Thể loại", color = Color.LightGray, fontSize = 12.sp)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         FilterChipItem(
-                            text = "Tất cả thể loại",
-                            isSelected = selectedGenre == null,
-                            onClick = { viewModel.selectGenre(null) }
+                            text = "Tất cả",
+                            isSelected = primaryFilter is PrimaryFilter.None || primaryFilter is PrimaryFilter.Search,
+                            onClick = { viewModel.setPrimaryFilter(PrimaryFilter.None) }
                         )
-                    }
-                    items(genres) { (slug, name) ->
-                        FilterChipItem(
-                            text = name,
-                            isSelected = selectedGenre == slug,
-                            onClick = { viewModel.selectGenre(slug) }
-                        )
+                        genres.forEach { (slug, name) ->
+                            val isSel = (primaryFilter as? PrimaryFilter.Genre)?.genreSlug == slug
+                            FilterChipItem(
+                                text = name,
+                                isSelected = isSel,
+                                onClick = { viewModel.setPrimaryFilter(PrimaryFilter.Genre(slug)) }
+                            )
+                        }
                     }
                 }
-            }
 
-            // Quality and Language Row
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Quality Left Box
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Định dạng",
-                        color = Color.LightGray,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                item {
+                    Text(text = "Quốc gia", color = Color.LightGray, fontSize = 12.sp)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(qualities) { q ->
+                        countries.forEach { (slug, name) ->
+                            val isSel = (primaryFilter as? PrimaryFilter.Country)?.countrySlug == slug
+                            FilterChipItem(
+                                text = name,
+                                isSelected = isSel,
+                                onClick = { viewModel.setPrimaryFilter(PrimaryFilter.Country(slug)) }
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Text(text = "Năm phát hành", color = Color.LightGray, fontSize = 12.sp)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        years.forEach { year ->
+                            val isSel = (primaryFilter as? PrimaryFilter.Year)?.year == year
+                            FilterChipItem(
+                                text = year,
+                                isSelected = isSel,
+                                onClick = { viewModel.setPrimaryFilter(PrimaryFilter.Year(year)) }
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Divider(color = Color.DarkGray)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Lọc phụ (Tùy chọn)",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                item {
+                    Text(text = "Định dạng", color = Color.LightGray, fontSize = 12.sp)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        qualities.forEach { q ->
                             val isSel = (q == "Tất cả" && selectedQuality == null) || (q == selectedQuality)
                             FilterChipItem(
                                 text = q,
@@ -620,20 +641,14 @@ fun SearchScreenContent(
                     }
                 }
 
-                // Language Right Box
-                Column(modifier = Modifier.weight(1.2f)) {
-                    Text(
-                        text = "Ngôn ngữ",
-                        color = Color.LightGray,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                item {
+                    Text(text = "Ngôn ngữ", color = Color.LightGray, fontSize = 12.sp)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(languages) { l ->
+                        languages.forEach { l ->
                             val isSel = (l == "Tất cả" && selectedLanguage == null) || (l == selectedLanguage)
                             FilterChipItem(
                                 text = l,
@@ -643,10 +658,73 @@ fun SearchScreenContent(
                         }
                     }
                 }
+
+                item { Spacer(modifier = Modifier.height(32.dp)) }
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(top = 16.dp)
+    ) {
+        // Search bar & Filter Button Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = searchQuery,
+                onValueChange = { 
+                    viewModel.setPrimaryFilter(PrimaryFilter.Search(it))
+                },
+                placeholder = { Text("Tìm kiếm tên phim...", color = Color.Gray) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = {
+                            viewModel.setPrimaryFilter(PrimaryFilter.None)
+                        }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Color.Gray)
+                        }
+                    }
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("search_input_field")
+            )
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            // Filter Button
+            IconButton(
+                onClick = { showFilterSheet = true },
+                modifier = Modifier
+                    .size(56.dp) // Match TextField height
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.List,
+                    contentDescription = "Bộ lọc",
+                    tint = if (primaryFilter !is PrimaryFilter.None && primaryFilter !is PrimaryFilter.Search) MaterialTheme.colorScheme.primary else Color.White
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         when (val state = searchState) {
             is UiState.Idle -> {
@@ -660,7 +738,7 @@ fun SearchScreenContent(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Tìm phim theo tên hoặc lọc theo thể loại ở trên",
+                            text = "Tìm phim theo tên hoặc nhấn nút Bộ lọc",
                             color = Color.Gray,
                             fontSize = 14.sp
                         )

@@ -38,6 +38,18 @@ class MovieRepository(
         }
     }
 
+    suspend fun getMoviesByCountry(country: String, page: Int = 1): Result<MoviePaginatedResponse> {
+        return runCatching {
+            apiService.getMoviesByCountry(country, page)
+        }
+    }
+
+    suspend fun getMoviesByYear(year: String, page: Int = 1): Result<MoviePaginatedResponse> {
+        return runCatching {
+            apiService.getMoviesByYear(year, page)
+        }
+    }
+
 
     // --- Local Favorites DB actions ---
     fun getAllFavorites(): Flow<List<FavoriteMovie>> = movieDao.getAllFavorites()

@@ -22,6 +22,14 @@ sealed interface UiState<out T> {
     data class Error(val message: String) : UiState<Nothing>
 }
 
+sealed class PrimaryFilter {
+    data class Search(val query: String) : PrimaryFilter()
+    data class Genre(val genreSlug: String) : PrimaryFilter()
+    data class Country(val countrySlug: String) : PrimaryFilter()
+    data class Year(val year: String) : PrimaryFilter()
+    object None : PrimaryFilter()
+}
+
 class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = AppDatabase.getDatabase(application)
@@ -50,11 +58,8 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     val isMoreHomeLoading = MutableStateFlow(false)
 
     // --- Search States ---
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
-    private val _selectedGenre = MutableStateFlow<String?>(null)
-    val selectedGenre: StateFlow<String?> = _selectedGenre.asStateFlow()
+    private val _primaryFilter = MutableStateFlow<PrimaryFilter>(PrimaryFilter.None)
+    val primaryFilter: StateFlow<PrimaryFilter> = _primaryFilter.asStateFlow()
 
     private val _selectedQuality = MutableStateFlow<String?>(null)
     val selectedQuality: StateFlow<String?> = _selectedQuality.asStateFlow()
@@ -147,44 +152,34 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun searchMovies(query: String) {
-        _searchQuery.value = query
-        // When typing a search query, clear selected genre to avoid conflicting list loads
-        _selectedGenre.value = null
-        
-        if (query.trim().isEmpty()) {
+    fun setPrimaryFilter(filter: PrimaryFilter) {
+        _primaryFilter.value = filter
+        if (filter is PrimaryFilter.None || (filter is PrimaryFilter.Search && filter.query.trim().isEmpty())) {
             rawSearchResults = emptyList()
             _searchState.value = UiState.Idle
             return
         }
+
         viewModelScope.launch {
             _searchState.value = UiState.Loading
-            repository.searchMovies(query, 1).onSuccess { response ->
-                rawSearchResults = response.items
-                applyClientFilters()
-            }.onFailure {
-                _searchState.value = UiState.Error("Không tìm thấy phim hoặc có lỗi xảy ra: ${it.localizedMessage}")
-            }
-        }
-    }
-
-    fun selectGenre(genreSlug: String?) {
-        _selectedGenre.value = genreSlug
-        // When selecting a genre, we clear search query so the lists don't conflict
-        if (genreSlug != null) {
-            _searchQuery.value = ""
-            viewModelScope.launch {
-                _searchState.value = UiState.Loading
-                repository.getMoviesByGenre(genreSlug, 1).onSuccess { response ->
-                    rawSearchResults = response.items
-                    applyClientFilters()
-                }.onFailure {
-                    _searchState.value = UiState.Error("Không thể tải danh sách theo thể loại: ${it.localizedMessage}")
+            try {
+                val response = when (filter) {
+                    is PrimaryFilter.Search -> repository.searchMovies(filter.query, 1)
+                    is PrimaryFilter.Genre -> repository.getMoviesByGenre(filter.genreSlug, 1)
+                    is PrimaryFilter.Country -> repository.getMoviesByCountry(filter.countrySlug, 1)
+                    is PrimaryFilter.Year -> repository.getMoviesByYear(filter.year, 1)
+                    else -> null
                 }
+                
+                response?.onSuccess { res ->
+                    rawSearchResults = res.items
+                    applyClientFilters()
+                }?.onFailure {
+                    _searchState.value = UiState.Error("Không tìm thấy phim hoặc có lỗi xảy ra: ${it.localizedMessage}")
+                }
+            } catch (e: Exception) {
+                _searchState.value = UiState.Error("Có lỗi xảy ra: ${e.localizedMessage}")
             }
-        } else {
-            rawSearchResults = emptyList()
-            _searchState.value = UiState.Idle
         }
     }
 

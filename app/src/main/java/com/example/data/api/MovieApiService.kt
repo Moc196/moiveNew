@@ -35,6 +35,18 @@ interface MovieApiService {
         @Path("genre") genre: String,
         @Query("page") page: Int = 1
     ): MoviePaginatedResponse
+
+    @GET("films/quoc-gia/{country}")
+    suspend fun getMoviesByCountry(
+        @Path("country") country: String,
+        @Query("page") page: Int = 1
+    ): MoviePaginatedResponse
+
+    @GET("films/nam-phat-hanh/{year}")
+    suspend fun getMoviesByYear(
+        @Path("year") year: String,
+        @Query("page") page: Int = 1
+    ): MoviePaginatedResponse
 }
 
 object ApiClient {

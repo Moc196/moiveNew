@@ -1,6 +1,6 @@
 {
-  "versionCode": 2,
-  "versionName": "1.1.0",
+  "versionCode": 3,
+  "versionName": "1.2.0",
   "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk",
-  "releaseNotes": "Thêm tính năng tự động cập nhật trong ứng dụng."
+  "releaseNotes": "Làm lại giao diện bộ lọc tuyệt đẹp. Thêm tính năng lọc theo Quốc gia và Năm phát hành."
 }
