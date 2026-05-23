@@ -33,68 +33,130 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:processDebugManifest
 > Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugJniLibFolders
-> Task :app:mergeDebugResources
 > Task :app:mergeDebugNativeLibs
-> Task :app:processDebugResources
+> Task :app:mergeDebugResources
+> Task :app:stripDebugDebugSymbols
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
-> Task :app:stripDebugDebugSymbols
 > Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugResources
 > Task :app:mergeExtDexDebug
 > Task :app:kspDebugKotlin
 
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:33:31 Unresolved reference 'BookmarkScreenContent'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:34:31 Unresolved reference 'DetailPlayerScreenContent'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:243:17 Unresolved reference 'BookmarkScreenContent'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:245:38 Cannot infer type for this parameter. Specify it explicitly.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:253:17 Unresolved reference 'DetailPlayerScreenContent'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:786:29 No value passed for parameter 'quality'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:786:29 No value passed for parameter 'episodeText'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:786:29 No value passed for parameter 'onClick'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:788:13 Syntax error: Expecting an expression.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:795:5 Anonymous functions with names are prohibited.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:917:29 Unresolved reference 'HistoryRowItem'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:928:1 Syntax error: Expecting '->'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:928:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:929:5 Anonymous functions with names are prohibited.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:929:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:934:5 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:939:31 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:939:73 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:987:1 Syntax error: Expecting '->'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:987:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:988:5 Anonymous functions with names are prohibited.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:988:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:993:51 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:994:52 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:995:54 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:996:50 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:998:18 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:999:26 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1001:5 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1005:5 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1009:5 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1019:5 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1022:39 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1024:9 'when' expression must be exhaustive. Add the 'Idle' branch or an 'else' branch.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1405:13 Syntax error: Expecting an element.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1405:18 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1408:2 Syntax error: Expecting '}'.
-e: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1408:2 Syntax error: Expecting '->'.
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:126:25 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:145:65 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:146:25 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/local/AppDatabase.kt:28:18 'fun fallbackToDestructiveMigration(): RoomDatabase.Builder<AppDatabase>' is deprecated. Replace by overloaded version with parameter to indicate if all tables should be dropped or not.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:16:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
 
-FAILURE: Build failed with an exception.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:17:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
 
-* What went wrong:
-Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:18:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
 
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights from a Build Scan (powered by Develocity).
-> Get more help at https://help.gradle.org.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:19:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
 
-BUILD FAILED in 37s
-31 actionable tasks: 31 executed
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:33:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:34:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:35:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:39:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:40:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:63:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:64:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:65:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:69:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:70:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/MovieModels.kt:100:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/components/EmbedVideoPlayer.kt:63:25 'var databaseEnabled: Boolean' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:616:21 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:720:49 'val Icons.Filled.List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1108:52 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1389:29 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/updater/UpdateModels.kt:8:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/updater/UpdateModels.kt:9:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/updater/UpdateModels.kt:10:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/updater/UpdateModels.kt:11:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes
+> Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 1m 1s
+38 actionable tasks: 38 executed
