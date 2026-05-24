@@ -143,7 +143,7 @@ fun HomeScreenContent(
     val cartoons by viewModel.cartoons.collectAsState()
     val romanceMovies by viewModel.romanceMovies.collectAsState()
     val homeState by viewModel.homeState.collectAsState()
-    val isMoreLoading by viewModel.isMoreHomeLoading.collectAsState()
+    val isMoreHomeLoading by viewModel.isMoreHomeLoading.collectAsState()
 
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -156,8 +156,8 @@ fun HomeScreenContent(
         }
     }
 
-    LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
+    LaunchedEffect(shouldLoadMore.value, isMoreHomeLoading) {
+        if (shouldLoadMore.value && !isMoreHomeLoading) {
             viewModel.loadMoreHomeMovies()
         }
     }
@@ -785,8 +785,8 @@ fun SearchScreenContent(
                         }
                     }
 
-                    LaunchedEffect(shouldLoadMore.value) {
-                        if (shouldLoadMore.value) {
+                    LaunchedEffect(shouldLoadMore.value, isMoreSearchLoading) {
+                        if (shouldLoadMore.value && !isMoreSearchLoading) {
                             viewModel.loadMoreSearchMovies()
                         }
                     }

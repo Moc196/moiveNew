@@ -56,6 +56,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     private var currentHomePage = 1
     val isMoreHomeLoading = MutableStateFlow(false)
+    private var hasHomeReachedEnd = false
 
     // --- Search States ---
     private val _primaryFilter = MutableStateFlow<PrimaryFilter>(PrimaryFilter.None)
@@ -70,6 +71,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private var rawSearchResults = emptyList<MovieItem>()
     private var currentSearchPage = 1
     val isMoreSearchLoading = MutableStateFlow(false)
+    private var hasSearchReachedEnd = false
 
     private val _searchState = MutableStateFlow<UiState<List<MovieItem>>>(UiState.Idle)
     val searchState: StateFlow<UiState<List<MovieItem>>> = _searchState.asStateFlow()
@@ -99,6 +101,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     fun loadHomeData() {
         viewModelScope.launch {
             _homeState.value = UiState.Loading
+            hasHomeReachedEnd = false
             try {
                 // Fetch newly updated
                 val updateRes = repository.getNewlyUpdatedMovies(1)
@@ -134,19 +137,24 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadMoreHomeMovies() {
-        if (isMoreHomeLoading.value) return
+        if (isMoreHomeLoading.value || hasHomeReachedEnd) return
         viewModelScope.launch {
             isMoreHomeLoading.value = true
             currentHomePage++
             try {
-                val response = repository.getNewlyUpdatedMovies(currentHomePage)
-                response.onSuccess {
-                    if (it.items.isNotEmpty()) {
-                        _newlyUpdatedMovies.value = _newlyUpdatedMovies.value + it.items
+                // Fetch newly updated
+                val updateRes = repository.getNewlyUpdatedMovies(currentHomePage)
+                updateRes.onSuccess { response ->
+                    if (response.items.isNotEmpty()) {
+                        _newlyUpdatedMovies.value = _newlyUpdatedMovies.value + response.items
+                    } else {
+                        hasHomeReachedEnd = true
+                        currentHomePage--
                     }
+                }.onFailure {
+                    currentHomePage--
                 }
             } catch (e: Exception) {
-                // Fail silently for load more
                 currentHomePage--
             } finally {
                 isMoreHomeLoading.value = false
@@ -157,6 +165,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     fun setPrimaryFilter(filter: PrimaryFilter) {
         _primaryFilter.value = filter
         currentSearchPage = 1
+        hasSearchReachedEnd = false
         
         // Reset secondary filters when primary filter changes to avoid unexpected empty results
         _selectedQuality.value = null
@@ -192,7 +201,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadMoreSearchMovies() {
-        if (isMoreSearchLoading.value) return
+        if (isMoreSearchLoading.value || hasSearchReachedEnd) return
         val currentPrimary = _primaryFilter.value
         if (currentPrimary is PrimaryFilter.None || (currentPrimary is PrimaryFilter.Search && currentPrimary.query.trim().isEmpty())) {
             return
@@ -215,6 +224,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         rawSearchResults = rawSearchResults + res.items
                         applyClientFilters()
                     } else {
+                        hasSearchReachedEnd = true
                         currentSearchPage--
                     }
                 }?.onFailure {
