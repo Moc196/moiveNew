@@ -287,7 +287,7 @@ fun HomeScreenContent(
                     }
                 }
 
-                if (isMoreLoading) {
+                if (isMoreHomeLoading) {
                     item {
                         Box(
                             modifier = Modifier
