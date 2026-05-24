@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -494,6 +495,7 @@ fun SearchScreenContent(
     val primaryFilter by viewModel.primaryFilter.collectAsState()
     val searchQuery = (primaryFilter as? PrimaryFilter.Search)?.query ?: ""
     val searchState by viewModel.searchState.collectAsState()
+    val isMoreSearchLoading by viewModel.isMoreSearchLoading.collectAsState()
 
     val selectedQuality by viewModel.selectedQuality.collectAsState()
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
@@ -775,22 +777,59 @@ fun SearchScreenContent(
                         }
                     }
                 } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(results) { item ->
-                            MovieCard(
-                                name = item.name,
-                                posterUrl = item.posterUrl ?: item.thumbUrl,
-                                quality = item.quality,
-                                episodeText = item.currentEpisode,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = { onMovieClick(item.slug) }
-                            )
+                    val gridState = rememberLazyGridState()
+                    val shouldLoadMore = remember {
+                        derivedStateOf {
+                            val lastVisibleItem = gridState.layoutInfo.visibleItemsInfo.lastOrNull()
+                            lastVisibleItem != null && lastVisibleItem.index >= gridState.layoutInfo.totalItemsCount - 4
+                        }
+                    }
+
+                    LaunchedEffect(shouldLoadMore.value) {
+                        if (shouldLoadMore.value) {
+                            viewModel.loadMoreSearchMovies()
+                        }
+                    }
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        LazyVerticalGrid(
+                            state = gridState,
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(
+                                start = 16.dp, 
+                                top = 16.dp, 
+                                end = 16.dp, 
+                                bottom = if (isMoreSearchLoading) 80.dp else 16.dp
+                            ),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(results) { item ->
+                                MovieCard(
+                                    name = item.name,
+                                    posterUrl = item.posterUrl ?: item.thumbUrl,
+                                    quality = item.quality,
+                                    episodeText = item.currentEpisode,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = { onMovieClick(item.slug) }
+                                )
+                            }
+                        }
+                        
+                        if (isMoreSearchLoading) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colorScheme.primary, 
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     }
                 }

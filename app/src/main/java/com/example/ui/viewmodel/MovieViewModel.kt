@@ -68,6 +68,8 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     val selectedLanguage: StateFlow<String?> = _selectedLanguage.asStateFlow()
 
     private var rawSearchResults = emptyList<MovieItem>()
+    private var currentSearchPage = 1
+    val isMoreSearchLoading = MutableStateFlow(false)
 
     private val _searchState = MutableStateFlow<UiState<List<MovieItem>>>(UiState.Idle)
     val searchState: StateFlow<UiState<List<MovieItem>>> = _searchState.asStateFlow()
@@ -154,6 +156,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setPrimaryFilter(filter: PrimaryFilter) {
         _primaryFilter.value = filter
+        currentSearchPage = 1
         
         // Reset secondary filters when primary filter changes to avoid unexpected empty results
         _selectedQuality.value = null
@@ -184,6 +187,43 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } catch (e: Exception) {
                 _searchState.value = UiState.Error("Có lỗi xảy ra: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun loadMoreSearchMovies() {
+        if (isMoreSearchLoading.value) return
+        val currentPrimary = _primaryFilter.value
+        if (currentPrimary is PrimaryFilter.None || (currentPrimary is PrimaryFilter.Search && currentPrimary.query.trim().isEmpty())) {
+            return
+        }
+
+        viewModelScope.launch {
+            isMoreSearchLoading.value = true
+            currentSearchPage++
+            try {
+                val response = when (currentPrimary) {
+                    is PrimaryFilter.Search -> repository.searchMovies(currentPrimary.query, currentSearchPage)
+                    is PrimaryFilter.Genre -> repository.getMoviesByGenre(currentPrimary.genreSlug, currentSearchPage)
+                    is PrimaryFilter.Country -> repository.getMoviesByCountry(currentPrimary.countrySlug, currentSearchPage)
+                    is PrimaryFilter.Year -> repository.getMoviesByYear(currentPrimary.year, currentSearchPage)
+                    else -> null
+                }
+                
+                response?.onSuccess { res ->
+                    if (res.items.isNotEmpty()) {
+                        rawSearchResults = rawSearchResults + res.items
+                        applyClientFilters()
+                    } else {
+                        currentSearchPage--
+                    }
+                }?.onFailure {
+                    currentSearchPage--
+                }
+            } catch (e: Exception) {
+                currentSearchPage--
+            } finally {
+                isMoreSearchLoading.value = false
             }
         }
     }
