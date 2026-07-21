@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "1.3.2",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.3.2",
-  "releaseNotes": "- Sửa lỗi chỉ hiện một vài phim khi tìm kiếm hoặc lọc\n- Tối ưu tải thêm phim (load more)"
+  "versionCode": 9,
+  "versionName": "1.3.3",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.3.3",
+  "releaseNotes": "- Sửa lỗi nút phóng to toàn màn hình không tự thoát khi ấn nút quay lại"
 }

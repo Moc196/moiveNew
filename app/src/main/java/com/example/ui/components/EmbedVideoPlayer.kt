@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.activity.compose.BackHandler
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -34,6 +35,12 @@ fun EmbedVideoPlayer(
     modifier: Modifier = Modifier
 ) {
     var isLoading by remember { mutableStateOf(true) }
+    var isFullscreen by remember { mutableStateOf(false) }
+    var exitFullscreen by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+    BackHandler(enabled = isFullscreen) {
+        exitFullscreen?.invoke()
+    }
 
     Box(
         modifier = modifier.background(Color.Black)
@@ -156,6 +163,12 @@ fun EmbedVideoPlayer(
                             }
                             customView = view
                             customViewCallback = callback
+                            isFullscreen = true
+                            
+                            exitFullscreen = {
+                                callback?.onCustomViewHidden()
+                                this.onHideCustomView()
+                            }
 
                             activity?.let { act ->
                                 val decorView = act.window.decorView as FrameLayout
@@ -193,6 +206,8 @@ fun EmbedVideoPlayer(
                             customView = null
                             customViewCallback?.onCustomViewHidden()
                             customViewCallback = null
+                            isFullscreen = false
+                            exitFullscreen = null
                         }
                     }
                 }
