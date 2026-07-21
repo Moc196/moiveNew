@@ -1,6 +1,6 @@
 {
-  "versionCode": 10,
-  "versionName": "1.4.0",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.0",
-  "releaseNotes": "- Tích hợp đa nguồn: Đã thêm máy chủ phim KKPhim giúp bạn có thêm nhiều sự lựa chọn bộ phim yêu thích.\n- Thêm nút chuyển đổi nguồn phát phim tại màn hình chính."
+  "versionCode": 11,
+  "versionName": "1.4.1",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.1",
+  "releaseNotes": "- Sửa lỗi trình phát video không tương thích với nguồn KKPhim.\n- Tích hợp đa nguồn: Đã thêm máy chủ phim KKPhim giúp bạn có thêm nhiều sự lựa chọn bộ phim yêu thích."
 }

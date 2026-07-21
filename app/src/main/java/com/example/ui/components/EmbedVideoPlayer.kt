@@ -217,7 +217,11 @@ fun EmbedVideoPlayer(
                 val loadedUrl = webView.tag as? String
                 if (loadedUrl != url) {
                     webView.tag = url
-                    if (url.contains(".m3u8") || url.endsWith(".m3u8")) {
+                    
+                    val isHtmlPlayer = url.contains("/embed/") || url.contains("/player/") || url.contains("youtube.com")
+                    val isRawM3u8 = (url.contains(".m3u8") || url.endsWith(".m3u8")) && !isHtmlPlayer
+
+                    if (isRawM3u8) {
                         // Load custom HTML with hls.js for native streaming support!
                         val html = """
                             <!DOCTYPE html>
@@ -257,7 +261,15 @@ fun EmbedVideoPlayer(
                             </body>
                             </html>
                         """.trimIndent()
-                        webView.loadDataWithBaseURL("https://phim.nguonc.com", html, "text/html", "UTF-8", null)
+                        
+                        val baseUrl = try {
+                            val uri = java.net.URI(url)
+                            "${uri.scheme}://${uri.host}"
+                        } catch (e: Exception) {
+                            "https://phim.nguonc.com"
+                        }
+                        
+                        webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", null)
                     } else {
                         webView.loadUrl(url)
                     }
