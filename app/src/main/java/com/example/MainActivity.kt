@@ -89,90 +89,135 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    val viewModel: MovieViewModel = viewModel()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    val context = LocalContext.current
-    val pipMode = LocalPipMode.current
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun MainScreen() {
+        val navController = rememberNavController()
+        val viewModel: MovieViewModel = viewModel()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        val context = LocalContext.current
+        val pipMode = LocalPipMode.current
 
-    // Immersive display logic: hide bottom navigation bar on player/detail screen
-    val showBottomBar = currentDestination?.route?.startsWith("detail") != true && !pipMode
+        // Immersive display logic: hide bottom navigation bar on player/detail screen
+        val showBottomBar = currentDestination?.route?.startsWith("detail") != true && !pipMode
+        val showTopBar = currentDestination?.route?.startsWith("detail") != true && !pipMode
 
-    // --- Auto Update Logic ---
-    var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
-    var isDownloading by remember { mutableStateOf(false) }
-    var downloadProgress by remember { mutableStateOf(0) }
+        // --- Auto Update Logic ---
+        var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
+        var isDownloading by remember { mutableStateOf(false) }
+        var downloadProgress by remember { mutableStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        val info = UpdateManager.checkUpdate()
-        if (info != null) {
-            updateInfo = info
-        }
-    }
-
-    if (updateInfo != null) {
-        AlertDialog(
-            onDismissRequest = { 
-                if (!isDownloading) updateInfo = null 
-            },
-            title = { Text("Đã có bản cập nhật mới!") },
-            text = {
-                if (isDownloading) {
-                    Column {
-                        Text("Đang tải xuống bản cập nhật...", color = Color.Gray)
-                        LinearProgressIndicator(
-                            progress = downloadProgress / 100f,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                        Text("$downloadProgress%", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(top = 4.dp))
-                    }
-                } else {
-                    Column {
-                        Text("Phiên bản ${updateInfo?.versionName} đã sẵn sàng để tải xuống.", fontWeight = FontWeight.Bold)
-                        if (!updateInfo?.releaseNotes.isNullOrEmpty()) {
-                            Text("\nCó gì mới:\n${updateInfo?.releaseNotes}", fontSize = 14.sp)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                if (!isDownloading) {
-                    TextButton(onClick = {
-                        isDownloading = true
-                        val coroutineScope = kotlinx.coroutines.GlobalScope
-                        coroutineScope.launch {
-                            val apkFile = UpdateManager.downloadApk(context, updateInfo!!.apkUrl) { progress ->
-                                downloadProgress = progress
-                            }
-                            if (apkFile != null && apkFile.exists()) {
-                                UpdateManager.installApk(context, apkFile)
-                            }
-                            isDownloading = false
-                            updateInfo = null
-                        }
-                    }) {
-                        Text("Cập nhật ngay")
-                    }
-                }
-            },
-            dismissButton = {
-                if (!isDownloading) {
-                    TextButton(onClick = { updateInfo = null }) {
-                        Text("Để sau", color = Color.Gray)
-                    }
-                }
+        LaunchedEffect(Unit) {
+            val info = UpdateManager.checkUpdate()
+            if (info != null) {
+                updateInfo = info
             }
-        )
-    }
-    // --- End Auto Update Logic ---
+        }
+
+        if (updateInfo != null) {
+            AlertDialog(
+                onDismissRequest = { 
+                    if (!isDownloading) updateInfo = null 
+                },
+                title = { Text("Đã có bản cập nhật mới!") },
+                text = {
+                    if (isDownloading) {
+                        Column {
+                            Text("Đang tải xuống bản cập nhật...", color = Color.Gray)
+                            LinearProgressIndicator(
+                                progress = downloadProgress / 100f,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                            Text("$downloadProgress%", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(top = 4.dp))
+                        }
+                    } else {
+                        Column {
+                            Text("Phiên bản ${updateInfo?.versionName} đã sẵn sàng để tải xuống.", fontWeight = FontWeight.Bold)
+                            if (!updateInfo?.releaseNotes.isNullOrEmpty()) {
+                                Text("\nCó gì mới:\n${updateInfo?.releaseNotes}", fontSize = 14.sp)
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    if (!isDownloading) {
+                        TextButton(onClick = {
+                            isDownloading = true
+                            val coroutineScope = kotlinx.coroutines.GlobalScope
+                            coroutineScope.launch {
+                                val apkFile = UpdateManager.downloadApk(context, updateInfo!!.apkUrl) { progress ->
+                                    downloadProgress = progress
+                                }
+                                if (apkFile != null && apkFile.exists()) {
+                                    UpdateManager.installApk(context, apkFile)
+                                }
+                                isDownloading = false
+                                updateInfo = null
+                            }
+                        }) {
+                            Text("Cập nhật ngay")
+                        }
+                    }
+                },
+                dismissButton = {
+                    if (!isDownloading) {
+                        TextButton(onClick = { updateInfo = null }) {
+                            Text("Để sau", color = Color.Gray)
+                        }
+                    }
+                }
+            )
+        }
+        // --- End Auto Update Logic ---
 
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                if (showTopBar) {
+                    val activeSource by viewModel.activeSource.collectAsState()
+                    CenterAlignedTopAppBar(
+                        title = { Text("NguonC Cine", fontWeight = FontWeight.Bold) },
+                        actions = {
+                            var expanded by remember { mutableStateOf(false) }
+                            Box {
+                                TextButton(onClick = { expanded = true }) {
+                                    Text(
+                                        text = if (activeSource == com.example.data.api.SourceProvider.NGUONC) "Nguồn C" else "KKPhim",
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Nguồn C") },
+                                        onClick = {
+                                            viewModel.switchSource(com.example.data.api.SourceProvider.NGUONC)
+                                            expanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("KKPhim") },
+                                        onClick = {
+                                            viewModel.switchSource(com.example.data.api.SourceProvider.KKPHIM)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            titleContentColor = Color.White
+                        )
+                    )
+                }
+            },
+            bottomBar = {
             if (showBottomBar) {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surface,

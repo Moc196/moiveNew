@@ -50,7 +50,8 @@ interface MovieApiService {
 }
 
 object ApiClient {
-    private const val BASE_URL = "https://phim.nguonc.com/api/"
+    private const val BASE_URL_NGUONC = "https://phim.nguonc.com/api/"
+    private const val BASE_URL_KKPHIM = "https://phimapi.com/"
 
     private val moshi: Moshi = Moshi.Builder()
         .addLast(KotlinJsonAdapterFactory())
@@ -64,12 +65,36 @@ object ApiClient {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    val service: MovieApiService by lazy {
+    // --- NguonC Service ---
+    private val nguonCService: MovieApiService by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_NGUONC)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(MovieApiService::class.java)
     }
+
+    // --- KKPhim Service ---
+    private val kkPhimService: KKPhimApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_KKPHIM)
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(KKPhimApiService::class.java)
+    }
+
+    // --- Repositories ---
+    val nguonCRepository: IMovieDataSource by lazy {
+        NguonCRepositoryImpl(nguonCService)
+    }
+
+    val kkPhimRepository: IMovieDataSource by lazy {
+        KKPhimRepositoryImpl(kkPhimService)
+    }
+
+    // Dùng cái này cho Code cũ chưa chuyển đổi (tạm thời)
+    val service: MovieApiService
+        get() = nguonCService
 }

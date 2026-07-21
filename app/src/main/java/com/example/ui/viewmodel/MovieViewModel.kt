@@ -14,6 +14,7 @@ import com.example.data.models.MovieItem
 import com.example.data.repository.MovieRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.example.data.api.SourceProvider
 
 sealed interface UiState<out T> {
     object Idle : UiState<Nothing>
@@ -33,7 +34,10 @@ sealed class PrimaryFilter {
 class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = AppDatabase.getDatabase(application)
-    private val repository = MovieRepository(ApiClient.service, database.movieDao())
+    private val repository = MovieRepository(ApiClient.nguonCRepository, database.movieDao())
+
+    private val _activeSource = MutableStateFlow(SourceProvider.NGUONC)
+    val activeSource: StateFlow<SourceProvider> = _activeSource.asStateFlow()
 
     // --- Home Screen States ---
     private val _newlyUpdatedMovies = MutableStateFlow<List<MovieItem>>(emptyList())
@@ -95,6 +99,20 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
+        loadHomeData()
+    }
+
+    fun switchSource(source: SourceProvider) {
+        if (_activeSource.value == source) return
+        _activeSource.value = source
+        val newDataSource = when (source) {
+            SourceProvider.NGUONC -> ApiClient.nguonCRepository
+            SourceProvider.KKPHIM -> ApiClient.kkPhimRepository
+        }
+        repository.setDataSource(newDataSource)
+        
+        // Reset and reload
+        _primaryFilter.value = PrimaryFilter.None
         loadHomeData()
     }
 

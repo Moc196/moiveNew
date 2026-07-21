@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.data.api.MovieApiService
+import com.example.data.api.IMovieDataSource
 import com.example.data.local.FavoriteMovie
 import com.example.data.local.MovieDao
 import com.example.data.local.WatchHistory
@@ -9,44 +9,48 @@ import com.example.data.models.MoviePaginatedResponse
 import kotlinx.coroutines.flow.Flow
 
 class MovieRepository(
-    private val apiService: MovieApiService,
+    private var dataSource: IMovieDataSource,
     private val movieDao: MovieDao
 ) {
+
+    fun setDataSource(newDataSource: IMovieDataSource) {
+        this.dataSource = newDataSource
+    }
 
     // --- Network API calls ---
     suspend fun getNewlyUpdatedMovies(page: Int): Result<MoviePaginatedResponse> {
         return runCatching {
-            apiService.getNewlyUpdatedMovies(page)
+            dataSource.getNewlyUpdatedMovies(page)
         }
     }
 
     suspend fun getMovieDetail(slug: String): Result<MovieDetailResponse> {
         return runCatching {
-            apiService.getMovieDetail(slug)
+            dataSource.getMovieDetail(slug)
         }
     }
 
     suspend fun searchMovies(keyword: String, page: Int = 1): Result<MoviePaginatedResponse> {
         return runCatching {
-            apiService.searchMovies(keyword, page)
+            dataSource.searchMovies(keyword, page)
         }
     }
 
     suspend fun getMoviesByGenre(genre: String, page: Int = 1): Result<MoviePaginatedResponse> {
         return runCatching {
-            apiService.getMoviesByGenre(genre, page)
+            dataSource.getMoviesByGenre(genre, page)
         }
     }
 
     suspend fun getMoviesByCountry(country: String, page: Int = 1): Result<MoviePaginatedResponse> {
         return runCatching {
-            apiService.getMoviesByCountry(country, page)
+            dataSource.getMoviesByCountry(country, page)
         }
     }
 
     suspend fun getMoviesByYear(year: String, page: Int = 1): Result<MoviePaginatedResponse> {
         return runCatching {
-            apiService.getMoviesByYear(year, page)
+            dataSource.getMoviesByYear(year, page)
         }
     }
 
