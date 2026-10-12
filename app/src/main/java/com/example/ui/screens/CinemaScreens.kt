@@ -1053,6 +1053,10 @@ fun DetailPlayerScreenContent(
     var isFav by remember { mutableStateOf(false) }
     var useDirectM3u8 by remember { mutableStateOf(false) }
     var isPlayerFullscreen by remember { mutableStateOf(false) }
+    // Overlay controls (the fullscreen button) start visible, then auto-hide.
+    var controlsVisible by remember { mutableStateOf(true) }
+    var interactionTick by remember { mutableStateOf(0) }
+    var wasFullscreen by remember { mutableStateOf(isPlayerFullscreen) }
     val context = LocalContext.current
 
     // App-level fullscreen: a reliable way to enlarge the video even when the embedded
@@ -1072,6 +1076,23 @@ fun DetailPlayerScreenContent(
         } else {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    // Auto-hide the overlay controls: 3s on first open, 2s after each tap.
+    LaunchedEffect(interactionTick) {
+        if (controlsVisible) {
+            delay(if (interactionTick == 0) 3000L else 2000L)
+            controlsVisible = false
+        }
+    }
+
+    // Re-show the controls when entering/leaving fullscreen so the "exit" button is easy to find.
+    LaunchedEffect(isPlayerFullscreen) {
+        if (isPlayerFullscreen != wasFullscreen) {
+            wasFullscreen = isPlayerFullscreen
+            controlsVisible = true
+            interactionTick++
         }
     }
 
@@ -1152,12 +1173,17 @@ fun DetailPlayerScreenContent(
                     Box(modifier = playerModifier) {
                         EmbedVideoPlayer(
                             url = streamUrl,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            onUserInteraction = {
+                                controlsVisible = true
+                                interactionTick++
+                            }
                         )
 
                         // App-level fullscreen toggle: guarantees the video can be enlarged
                         // regardless of the embedded player's own fullscreen support.
-                        if (!pipMode) {
+                        // It is an overlay control that is hidden until the user taps the video.
+                        if (!pipMode && controlsVisible) {
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)

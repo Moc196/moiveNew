@@ -3,6 +3,7 @@ package com.example.ui.components
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.content.pm.ActivityInfo
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
@@ -32,8 +33,10 @@ import com.example.util.findActivity
 @Composable
 fun EmbedVideoPlayer(
     url: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onUserInteraction: () -> Unit = {}
 ) {
+    val currentOnUserInteraction by rememberUpdatedState(onUserInteraction)
     var isLoading by remember { mutableStateOf(true) }
     var isFullscreen by remember { mutableStateOf(false) }
     var exitFullscreen by remember { mutableStateOf<(() -> Unit)?>(null) }
@@ -78,6 +81,16 @@ fun EmbedVideoPlayer(
                         displayZoomControls = false
                         // Set standard Chrome Mobile user agent to bypass streaming host WebView blocks
                         userAgentString = "Mozilla/5.0 (Linux; Android 13; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+                    }
+
+                    // Report taps so the host can show its overlay controls.
+                    // Returning false keeps the WebView fully interactive (the embedded
+                    // player still receives its own touches/clicks as usual).
+                    setOnTouchListener { _, event ->
+                        if (event.action == MotionEvent.ACTION_DOWN) {
+                            currentOnUserInteraction()
+                        }
+                        false
                     }
 
                     webViewClient = object : WebViewClient() {
