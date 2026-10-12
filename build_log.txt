@@ -17,8 +17,8 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:packageDebugResources
 > Task :app:processDebugNavigationResources
 > Task :app:parseDebugLocalResources
-> Task :app:generateDebugRFile
 > Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:generateDebugRFile
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
@@ -56,16 +56,16 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 > Task :app:mergeDebugNativeLibs
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
 
-> Task :app:writeDebugSigningConfigVersions
 > Task :app:processDebugResources
 > Task :app:compileDebugKotlin
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:129:29 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:148:69 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:149:29 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:130:29 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:149:69 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:150:29 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/local/AppDatabase.kt:28:18 'fun fallbackToDestructiveMigration(): RoomDatabase.Builder<AppDatabase>' is deprecated. Replace by overloaded version with parameter to indicate if all tables should be dropped or not.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data/models/KKPhimModels.kt:25:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
 - To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
@@ -250,5 +250,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 2m 56s
+BUILD SUCCESSFUL in 3m 17s
 38 actionable tasks: 38 executed

@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "1.4.3",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.3",
+  "versionCode": 14,
+  "versionName": "1.4.4",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.4",
   "releaseNotes": "- Sửa lỗi sau khi cập nhật vẫn báo còn bản mới (vòng lặp cập nhật).\n- Bản cập nhật giờ được phát hành đồng bộ, luôn khớp với APK.\n- Sửa lỗi không phóng to (fullscreen) được khi xem phim.\n- Thêm nút Toàn màn hình và tự xoay ngang."
 }
