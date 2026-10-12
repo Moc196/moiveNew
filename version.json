@@ -1,6 +1,6 @@
 {
-  "versionCode": 14,
-  "versionName": "1.4.4",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.4",
+  "versionCode": 15,
+  "versionName": "1.4.5",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.5",
   "releaseNotes": "- Sửa lỗi nguồn Nguồn C báo \"Không tìm thấy video\" khi bấm play.\n- Player của Nguồn C giờ được nhúng đúng như trên trang web (kèm Referer) nên phát được.\n- Sửa lỗi không phóng to (fullscreen) được khi xem phim.\n- Thêm nút Toàn màn hình và tự xoay ngang.\n- Bản cập nhật phát hành đồng bộ, luôn khớp với APK."
 }
