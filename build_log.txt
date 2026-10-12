@@ -18,35 +18,50 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:processDebugNavigationResources
 > Task :app:parseDebugLocalResources
 > Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:generateDebugRFile
 > Task :app:javaPreCompileDebug
+> Task :app:generateDebugRFile
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:mapDebugSourceSetPaths
-> Task :app:checkDebugAarMetadata
 > Task :app:checkDebugDuplicateClasses
-> Task :app:compileDebugNavigationResources
+> Task :app:checkDebugAarMetadata
+Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "ksp.com.intellij.openapi.application.Application.getService(java.lang.Class)" because the return value of "ksp.com.intellij.openapi.application.ApplicationManager.getApplication()" is null
 > Task :app:kspDebugKotlin
+	at ksp.com.intellij.openapi.fileEditor.FileDocumentManager.getInstance(FileDocumentManager.java:35)
+	at ksp.com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers.lambda$notifyDecompilerSetChange$1(BinaryFileTypeDecompilers.java:29)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
 > Task :app:mergeExtDexDebug
+> Task :app:mapDebugSourceSetPaths
 > Task :app:mergeLibDexDebug
+> Task :app:compileDebugNavigationResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:mergeDebugResources
 > Task :app:mergeDebugJniLibFolders
+> Task :app:mergeDebugResources
 > Task :app:validateSigningDebug
-> Task :app:mergeDebugNativeLibs
 > Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
 > Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugNativeLibs
+> Task :app:writeDebugSigningConfigVersions
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
 
 > Task :app:processDebugResources
-
 > Task :app:compileDebugKotlin
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:130:29 'fun LinearProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/MainActivity.kt:149:69 This is a delicate API and its use requires care. Make sure you fully read and understand documentation of the declaration that is marked as a delicate API.
@@ -192,11 +207,11 @@ w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/data
 - To keep applying to the value parameter only, use the '@param:' annotation target.
 
 See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/components/EmbedVideoPlayer.kt:70:25 'var databaseEnabled: Boolean' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/components/EmbedVideoPlayer.kt:73:25 'var databaseEnabled: Boolean' is deprecated. Deprecated in Java.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:625:21 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:729:49 'val Icons.Filled.List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List.
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1207:52 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
-w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1488:29 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1233:52 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/ui/screens/CinemaScreens.kt:1514:29 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
 w: file:///home/runner/work/moiveNew/moiveNew/app/src/main/java/com/example/updater/UpdateModels.kt:8:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
 - To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
 - To keep applying to the value parameter only, use the '@param:' annotation target.
@@ -235,5 +250,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 2m 30s
+BUILD SUCCESSFUL in 3m 9s
 38 actionable tasks: 38 executed
