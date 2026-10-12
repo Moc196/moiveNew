@@ -2,7 +2,6 @@ package com.example.ui.components
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.compose.BackHandler
+import com.example.util.findActivity
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -147,7 +147,7 @@ fun EmbedVideoPlayer(
 
                     var customView: View? = null
                     var customViewCallback: WebChromeClient.CustomViewCallback? = null
-                    val activity = context as? Activity
+                    val activity = context.findActivity()
 
                     webChromeClient = object : WebChromeClient() {
                         override fun getDefaultVideoPoster(): Bitmap? {
@@ -161,30 +161,44 @@ fun EmbedVideoPlayer(
                                 callback?.onCustomViewHidden()
                                 return
                             }
+
+                            // If we cannot attach the view (no Activity, null view) tell the
+                            // WebView we are done, otherwise it stays stuck in a "fullscreen"
+                            // state forever and nothing appears on screen.
+                            val act = activity
+                            if (view == null || act == null) {
+                                callback?.onCustomViewHidden()
+                                return
+                            }
+
                             customView = view
                             customViewCallback = callback
                             isFullscreen = true
-                            
+
                             exitFullscreen = {
                                 callback?.onCustomViewHidden()
                                 this.onHideCustomView()
                             }
 
-                            activity?.let { act ->
-                                val decorView = act.window.decorView as FrameLayout
-                                decorView.addView(view, FrameLayout.LayoutParams(
+                            val decorView = act.window.decorView as FrameLayout
+                            // The WebView can hand us a view that already has a parent;
+                            // detach it first so addView(...) does not throw.
+                            (view.parent as? ViewGroup)?.removeView(view)
+                            decorView.addView(
+                                view,
+                                FrameLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.MATCH_PARENT
-                                ))
-                                
-                                // Hide System UI
-                                val windowInsetsController = WindowCompat.getInsetsController(act.window, decorView)
-                                windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-                                
-                                // Set landscape
-                                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                            }
+                                )
+                            )
+
+                            // Hide System UI
+                            val windowInsetsController = WindowCompat.getInsetsController(act.window, decorView)
+                            windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
+                            // Set landscape
+                            act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                         }
 
                         override fun onHideCustomView() {
@@ -193,12 +207,12 @@ fun EmbedVideoPlayer(
                             
                             activity?.let { act ->
                                 val decorView = act.window.decorView as FrameLayout
-                                decorView.removeView(view)
-                                
+                                (view.parent as? ViewGroup)?.removeView(view)
+
                                 // Show System UI
                                 val windowInsetsController = WindowCompat.getInsetsController(act.window, decorView)
                                 windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
-                                
+
                                 // Restore orientation
                                 act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                             }

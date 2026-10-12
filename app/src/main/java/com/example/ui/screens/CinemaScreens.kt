@@ -1,6 +1,13 @@
 package com.example.ui.screens
 
+import android.content.pm.ActivityInfo
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.example.util.findActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -1045,6 +1052,38 @@ fun DetailPlayerScreenContent(
 
     var isFav by remember { mutableStateOf(false) }
     var useDirectM3u8 by remember { mutableStateOf(false) }
+    var isPlayerFullscreen by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    // App-level fullscreen: a reliable way to enlarge the video even when the embedded
+    // player cannot request native fullscreen (e.g. cross-origin iframes without
+    // allowfullscreen, or players that block the Fullscreen API).
+    BackHandler(enabled = isPlayerFullscreen) {
+        isPlayerFullscreen = false
+    }
+
+    LaunchedEffect(isPlayerFullscreen) {
+        val activity = context.findActivity() ?: return@LaunchedEffect
+        val controller = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+        if (isPlayerFullscreen) {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            // Restore the UI when leaving the player screen entirely.
+            val activity = context.findActivity() ?: return@onDispose
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+                .show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
 
     LaunchedEffect(key1 = slug) {
         viewModel.loadMovieDetail(slug)
@@ -1105,10 +1144,9 @@ fun DetailPlayerScreenContent(
                 }
 
                 if (streamUrl.isNotEmpty()) {
-                    val playerModifier = if (pipMode) {
-                        Modifier.fillMaxSize().background(Color.Black)
-                    } else {
-                        Modifier.fillMaxWidth().aspectRatio(1.77f).background(Color.Black)
+                    val playerModifier = when {
+                        pipMode || isPlayerFullscreen -> Modifier.fillMaxSize().background(Color.Black)
+                        else -> Modifier.fillMaxWidth().aspectRatio(1.77f).background(Color.Black)
                     }
 
                     Box(modifier = playerModifier) {
@@ -1116,6 +1154,28 @@ fun DetailPlayerScreenContent(
                             url = streamUrl,
                             modifier = Modifier.fillMaxSize()
                         )
+
+                        // App-level fullscreen toggle: guarantees the video can be enlarged
+                        // regardless of the embedded player's own fullscreen support.
+                        if (!pipMode) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(8.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(Color.Black.copy(alpha = 0.6f))
+                                    .clickable { isPlayerFullscreen = !isPlayerFullscreen }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    .testTag("player_fullscreen_btn")
+                            ) {
+                                Text(
+                                    text = if (isPlayerFullscreen) "Thoát toàn màn hình" else "Toàn màn hình",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 } else {
                     if (!pipMode) {
@@ -1131,7 +1191,7 @@ fun DetailPlayerScreenContent(
                     }
                 }
 
-                if (!pipMode) {
+                if (!pipMode && !isPlayerFullscreen) {
                     // Scrollable movie meta and episodes below the video deck
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),

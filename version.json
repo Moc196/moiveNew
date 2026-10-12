@@ -1,6 +1,6 @@
 {
-  "versionCode": 12,
-  "versionName": "1.4.2",
-  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.2",
-  "releaseNotes": "- Cập nhật logo mới cực đẹp cho ứng dụng."
+  "versionCode": 13,
+  "versionName": "1.4.3",
+  "apkUrl": "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=1.4.3",
+  "releaseNotes": "- Sửa lỗi không phóng to (fullscreen) được khi xem phim.\n- Thêm nút Toàn màn hình và tự xoay ngang.\n- Ổn định trình phát WebView cho cả Nguồn C và KKPhim."
 }
