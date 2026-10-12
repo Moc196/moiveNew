@@ -232,7 +232,7 @@ fun EmbedVideoPlayer(
                 if (loadedUrl != url) {
                     webView.tag = url
                     
-                    val isHtmlPlayer = url.contains("/embed/") || url.contains("/player/") || url.contains("youtube.com")
+                    val isHtmlPlayer = url.contains("/embed/") || url.contains("embed.php") || url.contains("/player/") || url.contains("youtube.com")
                     val isRawM3u8 = (url.contains(".m3u8") || url.endsWith(".m3u8")) && !isHtmlPlayer
 
                     if (isRawM3u8) {
@@ -284,6 +284,29 @@ fun EmbedVideoPlayer(
                         }
                         
                         webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", null)
+                    } else if (url.contains("streamc")) {
+                        // embed*.streamc.xyz (the only player provider used by NguonC) rejects the
+                        // player when it is opened as a normal top-level page and answers
+                        // "Video not found". It only works when embedded inside an iframe whose
+                        // parent is the movie site - which is exactly how phim.nguonc.com loads it.
+                        // Using that site as the base URL makes the WebView send the same Referer
+                        // header as the real website, so the player is accepted.
+                        val wrapperHtml = """
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                                <style>
+                                    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; }
+                                    iframe { border: 0; width: 100%; height: 100%; }
+                                </style>
+                            </head>
+                            <body>
+                                <iframe src="$url" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+                            </body>
+                            </html>
+                        """.trimIndent()
+                        webView.loadDataWithBaseURL("https://phim.nguonc.com/", wrapperHtml, "text/html", "UTF-8", null)
                     } else {
                         webView.loadUrl(url)
                     }
