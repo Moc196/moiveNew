@@ -94,6 +94,36 @@ object UpdateManager {
     }
 
     /**
+     * Returns the versionCode declared inside the given APK file, or null if it can't be read.
+     * Used to make sure we never install a stale/older APK (which would cause an update loop).
+     */
+    fun getApkVersionCode(context: Context, apkFile: File): Int? {
+        return try {
+            val pm = context.packageManager
+            val info = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageArchiveInfo(
+                    apkFile.absolutePath,
+                    android.content.pm.PackageManager.PackageInfoFlags.of(0)
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                pm.getPackageArchiveInfo(apkFile.absolutePath, 0)
+            }
+            info?.let {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    it.longVersionCode.toInt()
+                } else {
+                    @Suppress("DEPRECATION")
+                    it.versionCode
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    /**
      * Installs the downloaded APK using Android's package installer.
      */
     fun installApk(context: Context, apkFile: File) {

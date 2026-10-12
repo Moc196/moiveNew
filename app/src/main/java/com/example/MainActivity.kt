@@ -1,6 +1,7 @@
 package com.example
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -151,7 +152,27 @@ class MainActivity : ComponentActivity() {
                                     downloadProgress = progress
                                 }
                                 if (apkFile != null && apkFile.exists()) {
+                                    val downloadedCode = UpdateManager.getApkVersionCode(context, apkFile)
+                                    if (downloadedCode != null && downloadedCode <= BuildConfig.VERSION_CODE) {
+                                        // The download was a stale/older APK - installing it would
+                                        // keep showing the update dialog. Abort and let the user retry.
+                                        Toast.makeText(
+                                            context,
+                                            "Bản cập nhật vừa tải không mới hơn bản hiện tại. Vui lòng thử lại sau ít phút.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        isDownloading = false
+                                        return@launch
+                                    }
                                     UpdateManager.installApk(context, apkFile)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Tải bản cập nhật thất bại. Vui lòng thử lại.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    isDownloading = false
+                                    return@launch
                                 }
                                 isDownloading = false
                                 updateInfo = null

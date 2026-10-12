@@ -40,18 +40,44 @@ jobs:
 
     - name: Rename APK
       run: |
-        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-          cp app/build/outputs/apk/debug/app-debug.apk updatemovie.apk
+        # If the build failed, do NOT publish a stale APK / version.json.
+        if [ ! -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          echo "::error::Build failed - APK not found. Nothing will be published."
+          tail -n 150 build_log.txt || true
+          exit 1
         fi
+        cp app/build/outputs/apk/debug/app-debug.apk updatemovie.apk
 
-    - name: Commit and Push new APK
+    - name: Sync version.json with built APK
+      run: |
+        # versionCode/versionName come from app/build.gradle.kts (single source of truth).
+        VERSION_CODE=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts | head -n1)
+        VERSION_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts | head -n1)
+        echo "Publishing versionCode=$VERSION_CODE versionName=$VERSION_NAME"
+        if [ -z "$VERSION_CODE" ] || [ -z "$VERSION_NAME" ]; then
+          echo "::error::Could not read versionCode/versionName from app/build.gradle.kts"
+          exit 1
+        fi
+        if [ ! -f version.json ]; then
+          echo '{"versionCode":0,"versionName":"","apkUrl":"","releaseNotes":""}' > version.json
+        fi
+        # Keep releaseNotes as-is; only sync code/name/url so version.json always
+        # matches the APK that is committed in the SAME commit (no update race).
+        jq --argjson vc "$VERSION_CODE" \
+           --arg vn "$VERSION_NAME" \
+           --arg url "https://raw.githubusercontent.com/Moc196/moiveNew/main/updatemovie.apk?v=$VERSION_NAME" \
+           '.versionCode = $vc | .versionName = $vn | .apkUrl = $url' \
+           version.json > version.json.tmp && mv version.json.tmp version.json
+        cat version.json
+
+    - name: Commit and Push new APK + version.json
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add updatemovie.apk build_log.txt || true
+        git add updatemovie.apk build_log.txt version.json || true
         if ! git diff --staged --quiet; then
-          git commit -m "chore: Auto-build updated updatemovie.apk"
+          git commit -m "chore: Auto-build APK v$(jq -r .versionName version.json) (versionCode $(jq -r .versionCode version.json))"
           git push
         else
-          echo "No APK changes to commit"
+          echo "No changes to commit"
         fi
